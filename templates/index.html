@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Smart Marksheet</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* 🌈 Background */
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🧊 Glass Card */
+.card {
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(15px);
+    border-radius: 18px;
+    padding: 35px;
+    width: 420px;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.25);
+    animation: fadeIn 0.8s ease;
+}
+
+/* ✨ Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 📝 Headings */
+h3 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* ✍️ Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: rgba(255,255,255,0.9);
+    transition: 0.3s;
+}
+
+input:focus {
+    box-shadow: 0 0 12px #a29bfe;
+    transform: scale(1.02);
+}
+
+/* 🚀 Buttons */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 12px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    background: linear-gradient(135deg, #00f2fe, #4facfe);
+    color: #003049;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+/* 📊 Result Text */
+.result {
+    color: #fff;
+    text-align: center;
+    line-height: 1.8;
+}
+
+/* 📘 Subject Title */
+.subject {
+    color: #fff;
+    font-weight: bold;
+    margin-top: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+{% if step == 1 %}
+<form method="POST">
+    <input type="hidden" name="step" value="1">
+    <h3>✨ Student Name ✨</h3>
+    <input type="text" name="student" placeholder="Enter your name" required>
+    <button>Next</button>
+</form>
+{% endif %}
+
+{% if step == 2 %}
+<form method="POST">
+    <input type="hidden" name="step" value="2">
+    <input type="hidden" name="student" value="{{ student }}">
+    <h3>📚 Number of Subjects</h3>
+    <input type="number" name="count" placeholder="e.g. 5" required>
+    <button>Next</button>
+</form>
+{% endif %}
+
+{% if step == 3 %}
+<form method="POST">
+    <input type="hidden" name="step" value="3">
+    <input type="hidden" name="student" value="{{ student }}">
+    <input type="hidden" name="count" value="{{ count }}">
+    <h3>📝 Subject Names</h3>
+
+    {% for i in range(count) %}
+        <input type="text" name="subject{{ i }}" placeholder="Subject {{ i+1 }}" required>
+    {% endfor %}
+    <button>Next</button>
+</form>
+{% endif %}
+
+{% if step == 4 %}
+<form method="POST">
+    <input type="hidden" name="step" value="4">
+    <input type="hidden" name="student" value="{{ student }}">
+    <input type="hidden" name="count" value="{{ count }}">
+    <h3>📊 Enter Marks</h3>
+
+    {% for i in range(count) %}
+        <input type="hidden" name="subject{{ i }}" value="{{ subjects[i] }}">
+        <div class="subject">{{ subjects[i] }}</div>
+        <input type="number" name="total{{ i }}" placeholder="Total Marks" required>
+        <input type="number" name="obtained{{ i }}" placeholder="Marks Obtained" required>
+    {% endfor %}
+    <button>Generate Result</button>
+</form>
+{% endif %}
+
+{% if step == 5 %}
+<div class="result">
+    <h3>🎉 Final Result 🎉</h3>
+    <p><b>Name:</b> {{ student }}</p>
+    <p><b>Total Marks:</b> {{ total_marks }}</p>
+    <p><b>Obtained:</b> {{ obtained_marks }}</p>
+    <p><b>Percentage:</b> {{ percentage | round(2) }}%</p>
+    <p><b>Status:</b> {{ result }}</p>
+
+    <form method="GET">
+        <button>🔁 Start Again</button>
+    </form>
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>
